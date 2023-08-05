@@ -15,8 +15,8 @@ return new class extends Migration
             $table = \App\AppUtils\Utils::createDefaultTableColumns($table);
 
             $table->unsignedBigInteger('user_subscription_id');
-            $table->timestamp('issue_date');
-            $table->timestamp('due_date');
+            $table->date('issue_date');
+            $table->date('due_date');
             $table->decimal('amount', 14, 2);
             $table->enum('payment_status', ['paid', 'unpaid'])->default('unpaid');
 

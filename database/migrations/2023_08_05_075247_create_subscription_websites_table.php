@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('subscription_websites', function (Blueprint $table) {
             $table = \App\AppUtils\Utils::createDefaultTableColumns($table);
 
-            $table->string('website_name');
-            $table->string('website_url');
+            $table->string('website_name')->unique();
+            $table->string('website_url')->unique();
             $table->string('description');
             $table->decimal('price', 14, 2);
             $table->integer('duration_in_months');

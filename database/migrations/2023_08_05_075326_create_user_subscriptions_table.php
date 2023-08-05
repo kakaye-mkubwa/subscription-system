@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('subscription_website_id');
-            $table->timestamp('start_date')->nullable();
-            $table->timestamp('end_date')->nullable();
+            $table->timestamp('start_date');
+            $table->timestamp('end_date');
             $table->enum('payment_status', ['active', 'inactive', 'expired'])->default('inactive');
 
             // foreign keys

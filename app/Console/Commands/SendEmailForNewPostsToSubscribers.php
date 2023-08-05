@@ -15,7 +15,7 @@ class SendEmailForNewPostsToSubscribers extends Command
      *
      * @var string
      */
-    protected $signature = 'app:send-email-for-new-posts-to-subscribers {postID: ID of the post}';
+    protected $signature = 'app:send-email-for-new-posts-to-subscribers {postID : ID of the post}';
 
     /**
      * The console command description.
@@ -32,20 +32,27 @@ class SendEmailForNewPostsToSubscribers extends Command
         // get post id
         $postID = $this->argument('postID');
 
-        // get post
-        $post = Posts::find($postID);
-        if (!$post) {
-            Log::error('Post not found while sending email to subscribers. ID provided: '.$postID);
+        try {
+            // get post
+            $post = Posts::find($postID);
+            if (!$post) {
+                Log::error('Post not found while sending email to subscribers. ID provided: '.$postID);
+                return;
+            }
+
+            // get subscribers
+            $subscribers = $post->subscriptionWebsite?->users?->all();
+
+            // send email to subscribers
+            foreach ($subscribers as $subscriber) {
+                // que
+                // send email
+                Mail::to($subscriber->email)->queue(new NotifySubscribersOfNewPostMail($post, $subscriber));
+            }
+        }catch (\Exception $e) {
+            Log::error('Error while sending email to subscribers. Error: Referenced post: ' .$postID);
+            Log::debug('Error while sending email to subscribers. Error: '.$e->getMessage());
             return;
-        }
-
-        // get subscribers
-        $subscribers = $post->subscriptionWebsite->users->get();
-
-        // send email to subscribers
-        foreach ($subscribers as $subscriber) {
-            // send email
-            Mail::to($subscriber->email)->queue(new NotifySubscribersOfNewPostMail($post, $subscriber));
         }
     }
 }

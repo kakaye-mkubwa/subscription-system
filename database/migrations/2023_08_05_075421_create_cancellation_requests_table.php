@@ -16,8 +16,8 @@ return new class extends Migration
 
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('subscription_website_id');
-            $table->timestamp('request_date');
-            $table->timestamp('approval_date')->nullable();
+            $table->date('request_date');
+            $table->date('approval_date')->nullable();
             $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->string('reason');
 

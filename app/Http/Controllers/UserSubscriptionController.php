@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserSubscriptionRequest;
+use App\Models\Invoice;
 use App\Models\UserSubscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,14 +39,28 @@ class UserSubscriptionController extends Controller
         try {
             $userSubscription = null;
             DB::transaction(function () use ($validated, &$userSubscription) {
-                $userSubscription = UserSubscription::create($validated);
+                // create user subscription
+                $userSubscription = new UserSubscription();
 
-                $userSubscription->invoice()->create([
-                    'amount' => $userSubscription->subscriptionWebsite->price,
-                    'issue_date' => now(),
-                    'due_date' => now()->addDays(7),
-                    'created_by' => auth()->user()->id
-                ]);
+                $userSubscription->user_id = $validated['user_id'];
+                $userSubscription->subscription_website_id = $validated['subscription_website_id'];
+                $userSubscription->start_date = $validated['start_date'];
+                $userSubscription->end_date = $validated['end_date'];
+
+                $userSubscription->created_by = auth()->user()->id;
+
+                $userSubscription->save();
+
+                // create invoice
+                $invoice = new Invoice();
+
+                $invoice->user_subscription_id = $userSubscription->id;
+                $invoice->amount = $userSubscription->subscriptionWebsite->price;
+                $invoice->issue_date = now();
+                $invoice->due_date = now()->addDays(7);
+                $invoice->created_by = auth()->user()->id;
+
+                $invoice->save();
             });
 
             if ($userSubscription){
