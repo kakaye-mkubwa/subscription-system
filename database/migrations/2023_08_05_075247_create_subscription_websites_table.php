@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('subscription_websites', function (Blueprint $table) {
             $table = \App\AppUtils\Utils::createDefaultTableColumns($table);
 
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->string('website_name');
+            $table->string('website_url');
+            $table->string('description');
+            $table->decimal('price', 14, 2);
+            $table->integer('duration_in_months');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('subscription_websites');
     }
 };
