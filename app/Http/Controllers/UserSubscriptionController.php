@@ -36,6 +36,19 @@ class UserSubscriptionController extends Controller
 
         $validated['created_by'] = auth()->user()->id;
 
+        // check if user already has subscription for this website
+        $userSubscription = UserSubscription::where('user_id',$validated['user_id'])
+            ->where('subscription_website_id',$validated['subscription_website_id'])
+            ->count();
+
+        if ($userSubscription > 0){
+            return response()->json([
+                "success" => false,
+                "message" => "User already has subscription for this website.",
+                "data" => []
+            ],400);
+        }
+
         try {
             $userSubscription = null;
             DB::transaction(function () use ($validated, &$userSubscription) {

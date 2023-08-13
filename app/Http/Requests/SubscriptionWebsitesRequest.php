@@ -22,8 +22,8 @@ class SubscriptionWebsitesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'website_name' => 'required|string',
-            'website_url' => 'required|string',
+            'website_name' => 'required|string|unique:subscription_websites,website_name',
+            'website_url' => 'required|string|unique:subscription_websites,website_url',
             'description' => 'required|string',
             'price' => 'required|numeric|regex:/^\d+(\.\d{1,2})?$/', // 2 decimal places
             'duration_in_months' => 'required|int|min:1',

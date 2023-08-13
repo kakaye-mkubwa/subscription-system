@@ -2,11 +2,12 @@
 
 namespace App\AppUtils;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use OwenIt\Auditing\Auditable;
 
 class DefaultAppModel extends \Illuminate\Database\Eloquent\Model implements \OwenIt\Auditing\Contracts\Auditable
 {
-    use \Illuminate\Database\Eloquent\SoftDeletes,Auditable;
+    use \Illuminate\Database\Eloquent\SoftDeletes,Auditable,HasFactory;
 
     protected $casts = [
         'created_at' => 'datetime',
