@@ -13,8 +13,21 @@ class PaymentsController extends Controller
      */
     public function index()
     {
+        // validate request
+        \request()->validate([
+            'perPage' => 'integer|min:1|max:100',
+            'page' => 'integer|min:1'
+        ]);
+
+        // results per page
+        $perPage = htmlspecialchars(stripslashes(trim(request()->get('perPage')))) ?? 10;
+
+        // get page
+        $currentPage = htmlspecialchars(stripslashes(trim(request()->get('page')))) ?? 1;
+
         // list all payments
-        $payments = Payments::with(['invoice'])->get();
+        $payments = Payments::with(['invoice'])
+            ->paginate($perPage, ['*'], 'page', $currentPage);
 
         // return response
         return response()->json([

@@ -15,8 +15,19 @@ class CancellationRequestsController extends Controller
      */
     public function index()
     {
+        \request()->validate([
+            'perPage' => 'integer|min:1|max:100',
+            'page' => 'integer|min:1'
+        ]);
+
+        // results per page
+        $perPage = htmlspecialchars(stripslashes(trim(request()->get('perPage')))) ?? 10;
+        // get page
+        $currentPage = htmlspecialchars(stripslashes(trim(request()->get('page')))) ?? 1;
+
         // list all cancellation requests
-        $cancellationRequests = CancellationRequests::with(['subscriptionWebsite','user'])->get();
+        $cancellationRequests = CancellationRequests::with(['subscriptionWebsite','user'])
+            ->paginate($perPage, ['*'], 'page', $currentPage);
 
         // return response
         return response()->json([

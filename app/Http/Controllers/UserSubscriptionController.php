@@ -16,8 +16,19 @@ class UserSubscriptionController extends Controller
      */
     public function index()
     {
+        // validate request
+        \request()->validate([
+            'perPage' => 'integer|min:1|max:100',
+            'page' => 'integer|min:1'
+        ]);
+
+        // results per page
+        $perPage = request()->get('perPage') ?? 10;
+        $currentPage = request()->get('page') ?? 1;
+
         // list all
-        $userSubscriptions = UserSubscription::with(['user','subscriptionWebsite'])->get();
+        $userSubscriptions = UserSubscription::with(['user','subscriptionWebsite'])
+            ->paginate($perPage, ['*'], 'page', $currentPage);
 
         // return response
         return response()->json([

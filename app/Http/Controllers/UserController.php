@@ -120,8 +120,17 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
-        $user = User::all();
+        // validate request
+        \request()->validate([
+            'perPage' => 'integer|min:1|max:100',
+            'page' => 'integer|min:1'
+        ]);
+
+        // get all users
+        $perPage = \request()->perPage ?? 10;
+        $currentPage = \request()->page ?? 1;
+
+        $user = User::paginate($perPage, ['*'], 'page', $currentPage);
 
         return response()->json([
             'success' => true,
